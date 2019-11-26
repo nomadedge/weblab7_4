@@ -38,6 +38,7 @@ const getCityName = (lat, lon) => {
                 error: "No city on this coordinates"
             };
         } else {
+            cityName = cityName[0].toUpperCase() + cityName.slice(1).toLowerCase();
             res = {
                 isOk: true,
                 cityName: cityName

@@ -1,86 +1,92 @@
-const initialState = {
-    cities: []
-}
+const initialState = [];
 
 export default function reducer(state = initialState, action) {
     switch (action.type) {
         case 'FILL_CITIES': {
-            
+            const newState = [...state];
+            action.payload.forEach(cityName => {
+                newState.push({
+                    name: cityName,
+                    isFetching: false,
+                    error: null,
+                    weather: {},
+                    isSaved: true
+                });
+            });
+            return newState;
         }
         case 'ADD_CITY': {
-            const cities = [...state.cities, {
+            const newState = [...state, {
                 name: action.payload,
                 isFetching: false,
                 error: null,
-                weather: {}
+                weather: {},
+                isSaved: false
             }];
-            return {
-                ...state,
-                cities
-            };
+            return newState;
         }
         case 'DELETE_CITY': {
-            const cities = [...state.cities];
-            const index = cities.findIndex(city => city.name === action.payload);
+            const newState = [...state];
+            const index = newState.findIndex(city => city.name === action.payload);
             if (index === -1) {
                 return state;
             }
-            cities.splice(index, 1);
-            return {
-                ...state,
-                cities
-            };
+            newState.splice(index, 1);
+            return newState;
         }
         case 'FETCH_CITY_WEATHER': {
-            const cities = [...state.cities];
-            const index = cities.findIndex(city => city.name === action.payload);
+            const newState = [...state];
+            const index = newState.findIndex(city => city.name === action.payload);
             if (index === -1) {
                 return state;
             }
-            cities[index] = {
-                ...cities[index],
+            newState[index] = {
+                ...newState[index],
                 isFetching: true,
                 error: null,
                 weather: {}
             };
-            return {
-                ...state,
-                cities
-            };
+            return newState;
         }
         case 'FETCH_CITY_WEATHER_SUCCESS': {
-            const cities = [...state.cities];
-            const index = cities.findIndex(city => city.name === action.payload.city);
+            const newState = [...state];
+            const index = newState.findIndex(city => city.name === action.payload.name);
             if (index === -1) {
                 return state;
             }
-            cities[index] = {
-                ...cities[index],
+            newState[index] = {
+                ...newState[index],
                 isFetching: false,
                 error: null,
                 weather: action.payload.weather
             };
-            return {
-                ...state,
-                cities
-            };
+            return newState;
         }
         case 'FETCH_CITY_WEATHER_ERROR': {
-            const cities = [...state.cities];
-            const index = cities.findIndex(city => city.name === action.payload.city);
+            const newState = [...state];
+            const index = newState.findIndex(city => city.name === action.payload.name);
             if (index === -1) {
                 return state;
             }
-            cities[index] = {
-                ...cities[index],
+            newState[index] = {
+                ...newState[index],
                 isFetching: false,
                 error: action.payload.error,
                 weather: {}
             };
-            return {
-                ...state,
-                cities
+            return newState;
+        }
+        case 'SAVE_CITY': {
+            const newState = [...state];
+            const index = newState.findIndex(city => city.name === action.payload);
+            if (index === -1) {
+                return state;
+            }
+            newState[index] = {
+                ...newState[index],
+                isSaved: true
             };
+            return newState;
         }
         default: {
             return state;

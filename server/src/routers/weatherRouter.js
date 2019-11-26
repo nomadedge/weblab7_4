@@ -11,7 +11,10 @@ weatherRouter.route('/').get(async (req, res) => {
     const result = await getWeatherByName(name);
 
     if (result.isOk) {
-        res.json(result.weather);
+        res.json({
+            name: result.name,
+            weather: result.weather
+        });
     } else {
         res.status(404).send('Weather for this city is not available.');
     }
@@ -23,9 +26,12 @@ weatherRouter.route('/coordinates/').get(async (req, res) => {
     if (result.isOk) {
         const city = await getCityName(req.query.lat, req.query.lon);
         if (city.isOk) {
-            result.weather.name = city.cityName;
+            result.name = city.cityName;
         }
-        res.json(result.weather);
+        res.json({
+            name: result.name,
+            weather: result.weather
+        });
     } else {
         res.status(404).send('Weather for this coordinates is not available.');
     }

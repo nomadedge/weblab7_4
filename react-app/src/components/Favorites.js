@@ -32,6 +32,7 @@ class Favorites extends Component {
                     <FavoriteCityWeather
                         key={city.name}
                         cityName={city.name}
+                        isSaved={city.isSaved}
                         onDelete={this.handleDelete}
                     />
                 ))}
@@ -42,7 +43,7 @@ class Favorites extends Component {
 
 const mapStateToProps = ({ favoriteCities }) => {
     return {
-        favoriteCities: favoriteCities.cities,
+        favoriteCities: favoriteCities,
     };
 };
 const mapDispatchToProps = {

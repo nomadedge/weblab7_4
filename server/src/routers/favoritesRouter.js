@@ -32,8 +32,8 @@ favoritesRouter.route('/').get((req, res) => {
     });
 });
 
-favoritesRouter.route('/').post(async (req, res) => {
-    let name = req.body.name.trim();
+favoritesRouter.route('/:name').post(async (req, res) => {
+    let name = req.params.name.trim();
     name = name[0].toUpperCase() + name.slice(1).toLowerCase();
     const result = await getWeatherByName(name);
     if (result.isOk) {
@@ -49,8 +49,8 @@ favoritesRouter.route('/').post(async (req, res) => {
     }
 });
 
-favoritesRouter.route('/').delete((req, res) => {
-    let name = req.body.name.trim();
+favoritesRouter.route('/:name').delete((req, res) => {
+    let name = req.params.name.trim();
     name = name[0].toUpperCase() + name.slice(1).toLowerCase();
     sql.connect(config).then(pool => {
         return pool.request().query(`DELETE FROM [dbo].[Cities] WHERE [Name] = '${name}';`);

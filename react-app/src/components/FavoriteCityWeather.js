@@ -10,8 +10,8 @@ import '../styles/Weather.css';
 
 class FavoriteCityWeather extends Component {
     componentDidMount() {
-        const { cityName, fetchCityWeather } = this.props;
-        fetchCityWeather(cityName);
+        const { cityName, isSaved, fetchCityWeather } = this.props;
+        fetchCityWeather(cityName, isSaved);
     }
 
     render() {
@@ -41,7 +41,7 @@ class FavoriteCityWeather extends Component {
                     <button id='delete-button' onClick={() => onDelete(city.name)}>Delete city</button>
 
                     <div id='weather-container'>
-                        <CityWeather cityWeather={city} />
+                        <CityWeather city={city} />
                     </div>
                 </div>
             </>
@@ -51,7 +51,7 @@ class FavoriteCityWeather extends Component {
 
 const mapStateToProps = ({ favoriteCities }) => {
     return {
-        favoriteCities: favoriteCities.cities
+        favoriteCities: favoriteCities
     };
 };
 const mapDispatchToProps = {

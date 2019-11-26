@@ -17,7 +17,6 @@ const getWeatherByUrl = async url => {
     const weatherJson = await weatherData.data;
 
     const weather = {
-        name: weatherJson.name,
         iconUrl:
             'http://openweathermap.org/img/w/' +
             weatherJson.weather[0].icon +
@@ -29,8 +28,11 @@ const getWeatherByUrl = async url => {
         windSpeed: weatherJson.wind.speed
     };
 
+    const cityName = weatherJson.name[0].toUpperCase() + weatherJson.name.slice(1).toLowerCase()
+
     const out = {
         isOk: true,
+        name: cityName,
         weather: weather
     };
     return out;

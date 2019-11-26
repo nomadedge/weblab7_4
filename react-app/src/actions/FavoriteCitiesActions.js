@@ -4,9 +4,7 @@ export function fetchFavorites() {
     return async function (dispatch) {
         try {
             const cities = await axios.get('http://localhost:3001/api/favorites');
-            cities.data.forEach(element => {
-                dispatch({ type: 'ADD_CITY', payload: element });
-            });
+            dispatch({ type: 'FILL_CITIES', payload: cities.data });
         } catch (error) {
             alert('Fail to load favorites :(');
         }
@@ -32,24 +30,22 @@ export function addCity(cityName, currentState) {
 
 export function deleteCity(cityName) {
     return async function (dispatch) {
+        await axios.delete(`http://localhost:3001/api/favorites/${cityName}`);
         dispatch({ type: 'DELETE_CITY', payload: cityName });
-        axios.delete('http://localhost:3001/api/favorites', {
-            "name": cityName
-        });
     }
 }
 
-export function fetchCityWeather(cityName) {
+export function fetchCityWeather(cityName, isSaved) {
     return async function (dispatch) {
         dispatch({ type: 'FETCH_CITY_WEATHER', payload: cityName });
         try {
             const weatherResult = await axios.get(`http://localhost:3001/api/weather?city=${cityName}`);
-            const payload = {
-                city: cityName,
-                weather: weatherResult.data
-            };
+            if (!isSaved) {
+                await axios.post(`http://localhost:3001/api/favorites/${cityName}`);
+                dispatch({ type: 'SAVE_CITY', payload: cityName });
+            }
+            dispatch({ type: 'FETCH_CITY_WEATHER_SUCCESS', payload: weatherResult.data });
             console.log(weatherResult.data);
-            dispatch({ type: 'FETCH_CITY_WEATHER_SUCCESS', payload: payload });
         } catch (error) {
             const payload = {
                 city: cityName,
