@@ -40,7 +40,7 @@ export function deleteCity(cityName) {
     }
 }
 
-export function fetchCityWeather(cityName, isSaved) {
+export function fetchCityWeather(cityName) {
     return async function (dispatch) {
         dispatch({ type: 'FETCH_CITY_WEATHER', payload: cityName });
         try {
