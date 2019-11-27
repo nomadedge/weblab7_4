@@ -9,8 +9,7 @@ export default function reducer(state = initialState, action) {
                     name: cityName,
                     isFetching: false,
                     error: null,
-                    weather: {},
-                    isSaved: true
+                    weather: {}
                 });
             });
             return newState;
@@ -20,8 +19,7 @@ export default function reducer(state = initialState, action) {
                 name: action.payload,
                 isFetching: false,
                 error: null,
-                weather: {},
-                isSaved: false
+                weather: {}
             }];
             return newState;
         }
@@ -73,18 +71,6 @@ export default function reducer(state = initialState, action) {
                 isFetching: false,
                 error: action.payload.error,
                 weather: {}
-            };
-            return newState;
-        }
-        case 'SAVE_CITY': {
-            const newState = [...state];
-            const index = newState.findIndex(city => city.name === action.payload);
-            if (index === -1) {
-                return state;
-            }
-            newState[index] = {
-                ...newState[index],
-                isSaved: true
             };
             return newState;
         }

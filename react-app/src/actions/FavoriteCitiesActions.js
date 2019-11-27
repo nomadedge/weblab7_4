@@ -20,7 +20,12 @@ export function addCity(cityName, currentState) {
         cityName = cityName.trim();
         const cityNameFormatted = cityName[0].toUpperCase() + cityName.slice(1).toLowerCase();
         if (currentState.findIndex(city => city.name === cityNameFormatted) === -1) {
-            dispatch({ type: 'ADD_CITY', payload: cityNameFormatted });
+            try {
+                await axios.post(`http://localhost:3001/api/favorites/${cityName}`);
+                dispatch({ type: 'ADD_CITY', payload: cityNameFormatted });
+            } catch (error) {
+                alert(error.response.data);
+            }
         }
         else {
             alert('This city is already added :/');
@@ -40,12 +45,7 @@ export function fetchCityWeather(cityName, isSaved) {
         dispatch({ type: 'FETCH_CITY_WEATHER', payload: cityName });
         try {
             const weatherResult = await axios.get(`http://localhost:3001/api/weather?city=${cityName}`);
-            if (!isSaved) {
-                await axios.post(`http://localhost:3001/api/favorites/${cityName}`);
-                dispatch({ type: 'SAVE_CITY', payload: cityName });
-            }
             dispatch({ type: 'FETCH_CITY_WEATHER_SUCCESS', payload: weatherResult.data });
-            console.log(weatherResult.data);
         } catch (error) {
             const payload = {
                 city: cityName,
