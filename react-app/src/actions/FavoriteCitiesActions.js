@@ -11,32 +11,31 @@ export function fetchFavorites() {
     }
 }
 
-export function addCity(cityName, currentState) {
+export function addCity(cityName) {
     return async function (dispatch) {
         if (!cityName) {
             alert('Please enter the city :)');
             return;
         }
-        cityName = cityName.trim();
-        const cityNameFormatted = cityName[0].toUpperCase() + cityName.slice(1).toLowerCase();
-        if (currentState.findIndex(city => city.name === cityNameFormatted) === -1) {
-            try {
-                await axios.post(`http://localhost:3001/api/favorites/${cityName}`);
-                dispatch({ type: 'ADD_CITY', payload: cityNameFormatted });
-            } catch (error) {
-                alert(error.response.data);
-            }
-        }
-        else {
-            alert('This city is already added :/');
+        try {
+            const weatherObj = await axios.post(`http://localhost:3001/api/favorites/${cityName}`);
+            dispatch({ type: 'ADD_CITY', payload: weatherObj.data.name });
+            dispatch({ type: 'FETCH_CITY_WEATHER_SUCCESS', payload: weatherObj.data });
+        } catch (error) {
+            alert(error.response.data);
         }
     }
 }
 
 export function deleteCity(cityName) {
     return async function (dispatch) {
-        await axios.delete(`http://localhost:3001/api/favorites/${cityName}`);
-        dispatch({ type: 'DELETE_CITY', payload: cityName });
+        try {
+            await axios.delete(`http://localhost:3001/api/favorites/${cityName}`);
+            dispatch({ type: 'DELETE_CITY', payload: cityName });
+        }
+        catch (error) {
+            alert(error.response.data);
+        }
     }
 }
 
@@ -52,8 +51,8 @@ export function fetchCityWeather(cityName) {
                 error: 'Weather for this city is not available :('
             };
             dispatch({ type: 'FETCH_CITY_WEATHER_ERROR', payload: payload });
-            alert(payload.error);
             dispatch({ type: 'DELETE_CITY', payload: cityName });
+            alert(payload.error);
         }
     }
 }

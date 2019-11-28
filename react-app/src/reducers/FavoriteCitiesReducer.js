@@ -21,11 +21,20 @@ export default function reducer(state = initialState, action) {
                 error: null,
                 weather: {}
             }];
+            newState.sort((a, b) => {
+                const nameA = a.name.toLowerCase();
+                const nameB = b.name.toLowerCase();
+                if (nameA < nameB)
+                    return -1;
+                if (nameA > nameB)
+                    return 1;
+                return 0;
+            });
             return newState;
         }
         case 'DELETE_CITY': {
             const newState = [...state];
-            const index = newState.findIndex(city => city.name === action.payload);
+            const index = newState.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
             if (index === -1) {
                 return state;
             }
@@ -34,7 +43,7 @@ export default function reducer(state = initialState, action) {
         }
         case 'FETCH_CITY_WEATHER': {
             const newState = [...state];
-            const index = newState.findIndex(city => city.name === action.payload);
+            const index = newState.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
             if (index === -1) {
                 return state;
             }
@@ -62,7 +71,7 @@ export default function reducer(state = initialState, action) {
         }
         case 'FETCH_CITY_WEATHER_ERROR': {
             const newState = [...state];
-            const index = newState.findIndex(city => city.name === action.payload.name);
+            const index = newState.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
             if (index === -1) {
                 return state;
             }

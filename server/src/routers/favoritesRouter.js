@@ -34,13 +34,15 @@ favoritesRouter.route('/').get((req, res) => {
 
 favoritesRouter.route('/:name').post(async (req, res) => {
     let name = req.params.name.trim();
-    name = name[0].toUpperCase() + name.slice(1).toLowerCase();
-    const result = await getWeatherByName(name);
-    if (result.isOk) {
+    const weatherObj = await getWeatherByName(name);
+    if (weatherObj.isOk) {
         sql.connect(config).then(pool => {
-            return pool.request().query(`INSERT INTO [dbo].[Cities] VALUES ('${name}');`);
+            return pool.request().query(`INSERT INTO [dbo].[Cities] VALUES ('${weatherObj.name}');`);
         }).then(result => {
-            res.status(201).json({ name });
+            res.status(201).json({
+                name: weatherObj.name,
+                weather: weatherObj.weather
+            });
         }).catch(error => {
             res.status(409).send('This city is already in favorites.');
         });
@@ -51,7 +53,6 @@ favoritesRouter.route('/:name').post(async (req, res) => {
 
 favoritesRouter.route('/:name').delete((req, res) => {
     let name = req.params.name.trim();
-    name = name[0].toUpperCase() + name.slice(1).toLowerCase();
     sql.connect(config).then(pool => {
         return pool.request().query(`DELETE FROM [dbo].[Cities] WHERE [Name] = '${name}';`);
     }).then(result => {

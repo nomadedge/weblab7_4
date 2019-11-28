@@ -1,36 +1,30 @@
 const express = require('express');
 
 const { getWeatherByName, getWeatherByCoord } = require('../helpers/weatherGetter');
-const { getCityName } = require('../helpers/cityNameGetter');
 
 const weatherRouter = express.Router();
 
 weatherRouter.route('/').get(async (req, res) => {
     let name = req.query.city.trim();
-    name = name[0].toUpperCase() + name.slice(1).toLowerCase();
-    const result = await getWeatherByName(name);
+    const weatherObj = await getWeatherByName(name);
 
-    if (result.isOk) {
+    if (weatherObj.isOk) {
         res.json({
-            name: result.name,
-            weather: result.weather
+            name: weatherObj.name,
+            weather: weatherObj.weather
         });
     } else {
         res.status(404).send('Weather for this city is not available.');
     }
 });
 
-weatherRouter.route('/coordinates/').get(async (req, res) => {
-    const result = await getWeatherByCoord(req.query.lat, req.query.lon);
+weatherRouter.route('/coordinates').get(async (req, res) => {
+    const weatherObj = await getWeatherByCoord(req.query.lat, req.query.lon);
 
-    if (result.isOk) {
-        const city = await getCityName(req.query.lat, req.query.lon);
-        if (city.isOk) {
-            result.name = city.cityName;
-        }
+    if (weatherObj.isOk) {
         res.json({
-            name: result.name,
-            weather: result.weather
+            name: weatherObj.name,
+            weather: weatherObj.weather
         });
     } else {
         res.status(404).send('Weather for this coordinates is not available.');

@@ -10,13 +10,16 @@ import '../styles/Weather.css';
 
 class FavoriteCityWeather extends Component {
     componentDidMount() {
-        const { cityName, isSaved, fetchCityWeather } = this.props;
-        fetchCityWeather(cityName, isSaved);
+        const { cityName, favoriteCities, fetchCityWeather } = this.props;
+        const city = favoriteCities.find(city => city.name === cityName);
+        if (!(city.weather && city.error)) {
+            fetchCityWeather(cityName);
+        }
     }
 
     render() {
-        const { onDelete, favoriteCities } = this.props;
-        const city = favoriteCities.find(city => city.name === this.props.cityName);
+        const { onDelete, favoriteCities, cityName } = this.props;
+        const city = favoriteCities.find(city => city.name === cityName);
 
         if (city.isFetching) {
             return (
