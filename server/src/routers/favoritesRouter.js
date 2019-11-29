@@ -62,7 +62,7 @@ favoritesRouter.route('/:name').delete((req, res) => {
             res.status(204).end();
         }
     }).catch(error => {
-        res.status(409).send('This city is not in favorites.');
+        res.status(500).send('Internal server error. Please try later.');
     });
 });
 
