@@ -18,11 +18,12 @@ export function addCity(cityName) {
             return;
         }
         try {
+            dispatch({ type: 'ADD_CITY' });
             const weatherObj = await axios.post(`http://localhost:3001/api/favorites/${cityName}`);
-            dispatch({ type: 'ADD_CITY', payload: weatherObj.data.name });
-            dispatch({ type: 'FETCH_CITY_WEATHER_SUCCESS', payload: weatherObj.data });
+            dispatch({ type: 'ADD_CITY_SUCCESS', payload: weatherObj.data });
         } catch (error) {
             alert(error.response.data);
+            dispatch({ type: 'ADD_CITY_ERROR' });
         }
     }
 }
@@ -30,10 +31,12 @@ export function addCity(cityName) {
 export function deleteCity(cityName) {
     return async function (dispatch) {
         try {
-            await axios.delete(`http://localhost:3001/api/favorites/${cityName}`);
             dispatch({ type: 'DELETE_CITY', payload: cityName });
+            await axios.delete(`http://localhost:3001/api/favorites/${cityName}`);
+            dispatch({ type: 'DELETE_CITY_SUCCESS', payload: cityName });
         }
         catch (error) {
+            dispatch({ type: 'DELETE_CITY_ERROR', payload: cityName });
             alert(error.response.data);
         }
     }
@@ -51,8 +54,6 @@ export function fetchCityWeather(cityName) {
                 error: 'Weather for this city is not available :('
             };
             dispatch({ type: 'FETCH_CITY_WEATHER_ERROR', payload: payload });
-            dispatch({ type: 'DELETE_CITY', payload: cityName });
-            alert(payload.error);
         }
     }
 }

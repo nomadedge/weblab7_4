@@ -1,11 +1,14 @@
-const initialState = [];
+const initialState = {
+    isAdding: false,
+    cities: []
+};
 
 export default function reducer(state = initialState, action) {
     switch (action.type) {
         case 'FILL_CITIES': {
-            const newState = [...state];
+            const newState = {...state};
             action.payload.forEach(cityName => {
-                newState.push({
+                newState.cities.push({
                     name: cityName,
                     isFetching: false,
                     error: null,
@@ -15,13 +18,18 @@ export default function reducer(state = initialState, action) {
             return newState;
         }
         case 'ADD_CITY': {
-            const newState = [...state, {
-                name: action.payload,
+            const newState = {...state, isAdding: true};
+            return newState;
+        }
+        case 'ADD_CITY_SUCCESS': {
+            const newState = {...state, isAdding: false};
+            newState.cities.push({
+                name: action.payload.name,
                 isFetching: false,
                 error: null,
-                weather: {}
-            }];
-            newState.sort((a, b) => {
+                weather: action.payload.weather
+            });
+            newState.cities.sort((a, b) => {
                 const nameA = a.name.toLowerCase();
                 const nameB = b.name.toLowerCase();
                 if (nameA < nameB)
@@ -32,23 +40,45 @@ export default function reducer(state = initialState, action) {
             });
             return newState;
         }
+        case 'ADD_CITY_ERROR': {
+            const newState = {...state, isAdding: false};
+            return newState;
+        }
         case 'DELETE_CITY': {
-            const newState = [...state];
-            const index = newState.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
+            const newState = {...state};
+            const index = newState.cities.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
             if (index === -1) {
                 return state;
             }
-            newState.splice(index, 1);
+            newState.cities[index].isFetching = true;
+            return newState;
+        }
+        case 'DELETE_CITY_SUCCESS': {
+            const newState = {...state};
+            const index = newState.cities.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
+            if (index === -1) {
+                return state;
+            }
+            newState.cities.splice(index, 1);
+            return newState;
+        }
+        case 'DELETE_CITY_ERROR': {
+            const newState = {...state};
+            const index = newState.cities.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
+            if (index === -1) {
+                return state;
+            }
+            newState.cities[index].isFetching = false;
             return newState;
         }
         case 'FETCH_CITY_WEATHER': {
-            const newState = [...state];
-            const index = newState.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
+            const newState = {...state};
+            const index = newState.cities.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
             if (index === -1) {
                 return state;
             }
-            newState[index] = {
-                ...newState[index],
+            newState.cities[index] = {
+                ...newState.cities[index],
                 isFetching: true,
                 error: null,
                 weather: {}
@@ -56,13 +86,13 @@ export default function reducer(state = initialState, action) {
             return newState;
         }
         case 'FETCH_CITY_WEATHER_SUCCESS': {
-            const newState = [...state];
-            const index = newState.findIndex(city => city.name === action.payload.name);
+            const newState = {...state};
+            const index = newState.cities.findIndex(city => city.name === action.payload.name);
             if (index === -1) {
                 return state;
             }
-            newState[index] = {
-                ...newState[index],
+            newState.cities[index] = {
+                ...newState.cities[index],
                 isFetching: false,
                 error: null,
                 weather: action.payload.weather
@@ -70,13 +100,13 @@ export default function reducer(state = initialState, action) {
             return newState;
         }
         case 'FETCH_CITY_WEATHER_ERROR': {
-            const newState = [...state];
-            const index = newState.findIndex(city => city.name.toLowerCase() === action.payload.toLowerCase());
+            const newState = {...state};
+            const index = newState.cities.findIndex(city => city.name.toLowerCase() === action.payload.city.toLowerCase());
             if (index === -1) {
                 return state;
             }
-            newState[index] = {
-                ...newState[index],
+            newState.cities[index] = {
+                ...newState.cities[index],
                 isFetching: false,
                 error: action.payload.error,
                 weather: {}

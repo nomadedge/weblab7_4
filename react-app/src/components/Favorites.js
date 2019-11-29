@@ -10,10 +10,12 @@ class Favorites extends Component {
         this.props.fetchFavorites();
     }
 
-    handleAdd = event => {
+    handleAdd = async event => {
         event.preventDefault();
-        this.props.addCity(event.target[0].value, this.props.favoriteCities);
-        event.target[0].value = '';
+        const city = event.target[0].value;
+        event.target[0].value = 'Adding city...';
+        await this.props.addCity(city);
+        document.getElementById('input').value = '';
     }
 
     handleDelete = cityName => {
@@ -21,23 +23,46 @@ class Favorites extends Component {
     };
 
     render() {
-        return (
-            <>
-                <form name='cityAdd' onSubmit={this.handleAdd}>
-                    <input placeholder='Enter new favorite city' />
-                    <input type='submit' value='Add city' />
-                </form>
+        const { favoriteCities } = this.props;
+        if (favoriteCities.isAdding) {
+            return (
+                <>
+                    <div id='cityAdd'>
+                        <form name='cityAdd' onSubmit={this.handleAdd}>
+                            <input id='input' placeholder='Enter new favorite city' disabled/>
+                            <input type='submit' value='Add city' disabled />
+                        </form>
+                    </div>
 
-                {this.props.favoriteCities.map(city => (
-                    <FavoriteCityWeather
-                        key={city.name}
-                        cityName={city.name}
-                        isSaved={city.isSaved}
-                        onDelete={this.handleDelete}
-                    />
-                ))}
-            </>
-        );
+                    {favoriteCities.cities.map(city => (
+                        <FavoriteCityWeather
+                            key={city.name}
+                            cityName={city.name}
+                            onDelete={this.handleDelete}
+                        />
+                    ))}
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <div id='cityAdd'>
+                        <form name='cityAdd' onSubmit={this.handleAdd}>
+                            <input id='input' placeholder='Enter new favorite city' />
+                            <input type='submit' value='Add city' />
+                        </form>
+                    </div>
+
+                    {favoriteCities.cities.map(city => (
+                        <FavoriteCityWeather
+                            key={city.name}
+                            cityName={city.name}
+                            onDelete={this.handleDelete}
+                        />
+                    ))}
+                </>
+            );
+        }
     }
 }
 
