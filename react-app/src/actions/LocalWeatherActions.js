@@ -10,31 +10,31 @@ export function fetchLocalWeather() {
             await navigator.geolocation.getCurrentPosition(
                 async position => {
                     try {
-                        const weatherResult = await axios.get(`http://localhost:3001/api/weather/coordinates?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
-                        dispatch({ type: 'FETCH_LOCAL_WEATHER_SUCCESS', payload: weatherResult.data });
+                        const weatherObj = await axios.get(`http://localhost:3001/api/weather/coordinates?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+                        dispatch({ type: 'FETCH_LOCAL_WEATHER_SUCCESS', payload: weatherObj.data });
                         return;
                     } catch {
-                        dispatch({ type: 'FETCH_LOCAL_WEATHER_ERROR', payload: 'Weather for your city is not available :(' });
+                        dispatch({ type: 'FETCH_LOCAL_WEATHER_ERROR', payload: 'Weather for your city is not available.' });
                         return;
                     }
                 },
                 async error => {
                     try {
-                        const weatherResult = await axios.get(`http://localhost:3001/api/weather?city=${defaultCity}`);
-                        dispatch({ type: 'FETCH_LOCAL_WEATHER_SUCCESS', payload: weatherResult.data });
+                        const weatherObj = await axios.get(`http://localhost:3001/api/weather?city=${defaultCity}`);
+                        dispatch({ type: 'FETCH_LOCAL_WEATHER_SUCCESS', payload: weatherObj.data });
                         return;
                     } catch {
-                        dispatch({ type: 'FETCH_LOCAL_WEATHER_ERROR', payload: 'Weather for your city is not available :(' });
+                        dispatch({ type: 'FETCH_LOCAL_WEATHER_ERROR', payload: 'Weather for your city is not available.' });
                         return;
                     }
                 });
         } else {
             try {
-                const weatherResult = await axios.get(`http://localhost:3001/api/weather?city=${defaultCity}`);
-                dispatch({ type: 'FETCH_LOCAL_WEATHER_SUCCESS', payload: weatherResult.data });
+                const weatherObj = await axios.get(`http://localhost:3001/api/weather?city=${defaultCity}`);
+                dispatch({ type: 'FETCH_LOCAL_WEATHER_SUCCESS', payload: weatherObj.data });
                 return;
             } catch {
-                dispatch({ type: 'FETCH_LOCAL_WEATHER_ERROR', payload: 'Weather for your city is not available :(' });
+                dispatch({ type: 'FETCH_LOCAL_WEATHER_ERROR', payload: 'Weather for your city is not available.' });
                 return;
             }
         }
